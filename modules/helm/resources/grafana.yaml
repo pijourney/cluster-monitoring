@@ -1,0 +1,37 @@
+grafana.ini:
+  server:
+    domain: pi-1
+    root_url: "%(protocol)s://%(domain)s/grafana"
+    serve_from_sub_path: true
+ingress:
+  enabled: true
+  hosts:
+    - "pi-1"
+  path: "/grafana"
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    folder: /tmp/dashboard
+admin:
+  existingSecret: grafana-dashboard-conf
+  userKey: username
+  passwordKey: password
+
+envFromSecret: grafana-db-conf # change if your grafana-db-secret name is different.
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: PostgreSQL
+        type: postgres
+        url: ${host}
+        database: ${database}
+        user: ${username}
+        uid: postgrespijourney1
+        jsonData:
+          sslmode: "disable" # Update to "require" or "verify-full" if SSL is needed
+
+        secureJsonData:
+          password: ${password}
+        editable: false
